@@ -1,10 +1,10 @@
 {
   "name": "cfd-js",
-  "version": "0.3.13",
+  "version": "0.3.14",
   "domain": "cryptogarageinc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AtomicFinance/cfd-js.git"
+    "url": "https://github.com/Magnolia-Fi/cfd-js.git"
   },
   "description": "Crypto Finance Development Kit for JavaScript.",
   "author": "Crypto Garage",
@@ -16,9 +16,9 @@
       3
     ]
   },
-  "homepage": "https://github.com/AtomicFinance/cfd-js",
+  "homepage": "https://github.com/Magnolia-Fi/cfd-js",
   "bugs": {
-    "url": "https://github.com/AtomicFinance/cfd-js/issues"
+    "url": "https://github.com/Magnolia-Fi/cfd-js/issues"
   },
   "memo": {
     "abi_url": "https://github.com/lgeiger/node-abi/blob/master/index.js#L51",
