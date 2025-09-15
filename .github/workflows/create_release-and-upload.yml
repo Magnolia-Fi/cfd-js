@@ -1,9 +1,10 @@
 name: create-release-upload
 
-on: 
+on:
   push:
     tags:
     - 'v*'
+  workflow_dispatch:
 
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 4
@@ -90,17 +91,17 @@ jobs:
       id: node_cache
       with:
         path: node_modules
-        key: node-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-0
-        restore-keys: node-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-
+        key: node-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-0
+        restore-keys: node-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-
     - name: use npm cache
       if: steps.node_cache.outputs.cache-hit != 'true'
       uses: actions/cache@v4
       id: npm_cache
       with:
         path: ${{ steps.npm_info.outputs.temp_npm_cachedir }}
-        key: npm-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-0
+        key: npm-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-0
         restore-keys: |
-          npm-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-
+          npm-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-
     - name: npm_install
       if: steps.node_cache.outputs.cache-hit != 'true'
       env:
@@ -178,7 +179,14 @@ jobs:
   upload-object-ubuntu:
     name: upload-object-ubuntu
     needs: create_releases
-    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-24.04-arm
+            arch: arm64
+          - os: ubuntu-latest
+            arch: x86_64
+    runs-on: ${{ matrix.os }}
     container:
       image: node:18
       options: --user root
@@ -224,17 +232,17 @@ jobs:
       id: node_cache
       with:
         path: node_modules
-        key: node-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-0
-        restore-keys: node-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-
+        key: node-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-0
+        restore-keys: node-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-
     - name: use npm cache
       if: steps.node_cache.outputs.cache-hit != 'true'
       uses: actions/cache@v4
       id: npm_cache
       with:
         path: ${{ steps.npm_info.outputs.temp_npm_cachedir }}
-        key: npm-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-0
+        key: npm-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-0
         restore-keys: |
-          npm-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-
+          npm-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-
     - name: npm_install
       if: steps.node_cache.outputs.cache-hit != 'true'
       env:
@@ -281,7 +289,7 @@ jobs:
       with:
         tag_name: ${{ steps.get_version.outputs.VERSION }}
         files: ./dist/cfd.zip
-        name: cfdjs-api-${{ steps.get_version.outputs.VERSION }}-ubuntu22-gcc-x86_64.zip
+        name: cfdjs-api-${{ steps.get_version.outputs.VERSION }}-ubuntu22-gcc-${{ matrix.arch }}.zip
     - name: cleanup
       run: rm -rf build
       shell: bash
@@ -306,7 +314,7 @@ jobs:
   upload-object-macos:
     name: upload-object-macos
     needs: create_releases
-    runs-on: [self-hosted, macos]
+    runs-on: macos-latest
     timeout-minutes: 50
 
     steps:
@@ -335,17 +343,17 @@ jobs:
       id: node_cache
       with:
         path: node_modules
-        key: node-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-0
-        restore-keys: node-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-
+        key: node-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-0
+        restore-keys: node-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}-
     - name: use npm cache
       if: steps.node_cache.outputs.cache-hit != 'true'
       uses: actions/cache@v4
       id: npm_cache
       with:
         path: ${{ steps.npm_info.outputs.temp_npm_cachedir }}
-        key: npm-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-0
+        key: npm-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-0
         restore-keys: |
-          npm-${{ runner.os }}-18-${{ steps.node_ver.outputs.node_version }}-
+          npm-${{ runner.os }}-18-v2-${{ steps.node_ver.outputs.node_version }}-
     - name: npm_install
       if: steps.node_cache.outputs.cache-hit != 'true'
       env:
